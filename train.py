@@ -94,11 +94,11 @@ def model_train(x, y, lr, show, max_iter):
         theta0, theta1 = update_thetas(x, y, lr, theta0, theta1)
         loss = new_loss
         new_loss = mse(y, predict_lst(x, theta0, theta1))
-        if show:
+        if show == 1:
             print('Iteration - {}, loss - {}'.format(iteration, new_loss))
         if iteration == max_iter:
             break
-    if show:
+    if show == 1:
         print('Model trained with {} iteration, theta0 - {}, theta1 - {}'.format(iteration, theta0, theta1))
     return theta0, theta1
 
@@ -126,12 +126,18 @@ def plot(x, y, y_pred):
 def main():
     args = parse_args()
     x, y = read_data(args['path'])
+    if (args['lr'] > 1) | (args['lr'] < 0):
+        args['lr'] = 0.1
+        print('--lr must be bigger than 0 and not bigger than 1. It was set to 0.1')
+    if args['max_iter'] <= 0:
+        args['max_iter'] = 1000
+        print('--max_iter must be bigger than 0. It was set to 1000')
     theta0, theta1 = model_train(x, y, args['lr'], args['show'], args['max_iter'])
     save_thetas(x, theta0, theta1)
-    if args['plot']:
+    if args['plot'] == 1:
         plot(x, y, predict_lst(norm_data(x), theta0, theta1))
         print('Graph save to plot.png')
-    if args['r2']:
+    if args['r2'] == 1:
         print('R2 metric -', r_squared(y, predict_lst(norm_data(x), theta0, theta1)))
 
 
